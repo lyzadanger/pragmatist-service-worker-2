@@ -78,24 +78,20 @@ A Service Worker may not have a scope above itself in the directory hierarchy (e
 
 ### FetchEvent
 
-When the browser requests a resource that falls within an active Service Worker's scope, a `fetch` event is dispatched on the Service Worker and the SW may listen for it.
+When the browser requests a resource that falls within an active Service Worker's scope, a fetch  event is dispatched on the Service Worker and the SW may listen for it.
 
-`fetch` event _handlers_ are invoked with a `fetchEvent`. `fetchEvent` objects contain two very useful things:
+`fetch` event _handlers_ are invoked with a [`FetchEvent`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent). `FetchEvent` objects contain two very useful things:
 
 * a `Request` object (`fetchEvent.request`) containing many details about the request in question
 * a `respondWith()` method that allows the SW to respond to the fetch with its own `Response`
 
 If a Service Worker uses the `fetchEvent.respondWith()` method, it should provide a `Response` or a `Promise` that will resolve to a `Response`. That is, the browser spits out a request and is looking for a response in return.
 
-* // TODO What type of request (matching app shell files via URL, headers for content type)
-
 ### fetch API
 
-The `fetch` API provides an interface for fetching resources from the network. It is similar to `XMLHttpRequest` in ambition.
+The [`Fetch` API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) provides an interface for fetching resources from the network. It is similar to `XMLHttpRequest` in ambition.
 
 `fetch(request)` returns a `Promise` that resolves to a `Response` if the fetching is successful.
-
-* // TODO MDN link
 
 #### Request
 
@@ -107,19 +103,16 @@ const theRequest = new Request('foo.html');
 
 More often, you'll be dealing with a pre-existing request inside of a `fetchEvent`, e.g., rather than creating your own. In this case, looking at details of the `fetchEvent.request` can help you figure out how to handle it. Examples in this presentation include:
 
-* Looking at the request's `Accept` headers to see if the request is for an image: // TODO!!
+* Looking at the request's `Accept` headers to see if the request is for an image (e.g.: `request.headers.get('Accept').indexOf('image') !== -1`)
 * Checking `request.mode`: it's value will be `navigate` if this is a request for a web document/page
 
 ##### `request.mode` polyfill
 
 `request.mode` isn't supported absolutely everywhere yet. An equivalent check is:
 
-
-
-#### fetchEvent.request.mode
-
-* navigate
-* polyfill
+```
+request.method === 'GET' && request.headers.get('Accept').includes('text/html')
+```
 
 #### Response
 
